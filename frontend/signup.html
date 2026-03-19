@@ -1,0 +1,19 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset='utf-8'> <meta http-equiv='X-UA-Compatible' content='IE=edge'> 
+        <title>Page Title</title> <meta name='viewport' content='width=device-width, initial-scale=1'> 
+        <link rel='stylesheet' type='text/css' media='screen' href='main.css'> 
+    </head> 
+        <body> 
+            <form onsubmit="signup(event)" method="POST">
+                <h1>Sign up please</h1> 
+                <label for="email">Enter email:</label> 
+                <input type="email" name="email" required><br> 
+                <label for="password">Enter password:</label> 
+                <input type="password" name="password" required><br> 
+                <button>Signup</button> </form> 
+                <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+                <script src="signup.js"></script> 
+        </body> 
+</html>
