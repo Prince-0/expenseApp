@@ -1,4 +1,5 @@
 const User = require('./usersmodel');
+const bcrypt = require('bcrypt');
 
 exports.signup = async (req, res) => {
     try {
@@ -11,7 +12,13 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        const user = await User.create({ email, password });
+        console.log("BODY:", req.body);
+        console.log("PASSWORD:", req.body.password);
+
+        const salt = 10;
+        const hashpswd = await bcrypt.hash(password, salt);
+
+        const user = await User.create({ email: email , password: hashpswd });
 
         res.status(201).json({
             message: 'User created successfully',
@@ -34,9 +41,16 @@ exports.login = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        /*
         if (user.password !== password) {
             return res.status(401).json({ message: 'User not authorized' });
         }
+        */
+
+        const isMatch = await bcrypt.compare(password , user.password);
+        
+        if(!isMatch)
+            return res.status(401).json({ message: 'User not authorized' });
 
         res.status(200).json({
             message: 'User Login successful',

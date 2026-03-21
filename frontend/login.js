@@ -11,7 +11,8 @@ window.login = async function(e){
             'http://localhost:3001/user/login',
             loginDetails
         );
-
+        
+        console.log(res);
         alert(res.data.message);
 
         // optional: redirect
