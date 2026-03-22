@@ -15,8 +15,7 @@ window.login = async function(e){
         console.log(res);
         alert(res.data.message);
 
-        // optional: redirect
-        // window.location.href = "dashboard.html";
+        window.location.href = "ui.html";
 
     } catch(err){
         console.log(err);

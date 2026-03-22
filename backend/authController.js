@@ -12,9 +12,6 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        console.log("BODY:", req.body);
-        console.log("PASSWORD:", req.body.password);
-
         const salt = 10;
         const hashpswd = await bcrypt.hash(password, salt);
 
