@@ -3,7 +3,13 @@ const Transaction = require('./transactionModel');
 const addTransaction = async (req,res)=>{
 
     try{
-        const transaction = await Transaction.create(req.body);
+        const transaction = await Transaction.create({
+            amount: req.body.amount,
+            category: req.body.category,
+            description: req.body.description,
+            userId: req.userId 
+        });
+
         res.json(transaction);
     }
 
@@ -15,7 +21,10 @@ const addTransaction = async (req,res)=>{
 
 const getTransaction = async (req,res) =>{
     try{
-        const transactions = await Transaction.findAll();
+        const transactions = await Transaction.findAll({
+            where: { userId: req.userId }
+        });
+
         res.json(transactions);   
     }
     catch(err){
@@ -27,7 +36,10 @@ const getTransaction = async (req,res) =>{
 const deleteTransaction = async(req,res)=>{
     try{
         await Transaction.destroy({
-            where:{ id:req.params.id }
+            where:{
+                 id:req.params.id ,
+                 userId:req.userId
+            }
         });
 
         res.send("Transaction deleted");

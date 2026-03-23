@@ -1,5 +1,6 @@
 const User = require('./usersmodel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
     try {
@@ -49,10 +50,21 @@ exports.login = async (req, res) => {
         if(!isMatch)
             return res.status(401).json({ message: 'User not authorized' });
 
-        res.status(200).json({
-            message: 'User Login successful',
-            user
+        const token = jwt.sign(
+            { userId: user.id },
+            "secretkey"
+        );
+
+        // SEND TOKEN TO FRONTEND
+        return res.status(200).json({
+            message: "Login successful",
+            token: token,
+            user:{
+                id:user.id,
+                email:user.email
+            }
         });
+
 
     } catch (err) {
         console.log(err);

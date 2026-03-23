@@ -1,7 +1,12 @@
 const API = "http://localhost:3001/user/transaction";
 
 async function loadTransactions() {
-    const res = await fetch(API);
+    const res = await fetch(API,{
+        method:"GET",
+        header: {
+            "Authorization": localStorage.getItem("token")
+        }
+    });
     const data = await res.json();
 
     const list = document.getElementById("list");
@@ -26,7 +31,8 @@ async function addTransaction() {
     await fetch(API, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token")
         },
         body: JSON.stringify({ amount, category , description})
     });
@@ -36,7 +42,8 @@ async function addTransaction() {
 
 async function deleteTransaction(id) {
     await fetch(`${API}/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        "Authorization": localStorage.getItem("token")
     });
 
     loadTransactions();

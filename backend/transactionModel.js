@@ -14,8 +14,12 @@ const Transaction = sequelize.define("expense",{
 
   description:{
     type: DataTypes.STRING
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
-
+  
 },
 {
   tableName: "expense" 

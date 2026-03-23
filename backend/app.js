@@ -2,8 +2,11 @@ const express = require('express');
 const cors = require('cors');
 
 const sequelize = require('./db');
-require('./usersmodel');
-require('./transactionModel');
+const User = require('./usersmodel');
+const expense = require('./transactionModel');
+
+User.hasMany(expense);
+expense.belongsTo(User);
 
 const userRoutes = require('./authRoute');
 const transactionRoute = require('./transactionRoute');

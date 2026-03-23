@@ -12,18 +12,14 @@ window.login = async function(e){
             loginDetails
         );
         
-        console.log(res);
-        alert(res.data.message);
+        localStorage.setItem("token", res.data.token);
+
+        alert('Login Successful');
 
         window.location.href = "ui.html";
 
     } catch(err){
         console.log(err);
-
-        if(err.response){
-            alert(err.response.data.message);
-        } else {
-            alert('Login failed');
-        }
+        alert('Login failed.');
     }
 }
