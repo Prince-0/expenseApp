@@ -10,7 +10,7 @@ const auth = (req, res, next) => {
 
         const decoded = jwt.verify(token, "secretkey");
 
-        req.userId = decoded.userId;
+        req.user = decoded;
 
         next(); 
 

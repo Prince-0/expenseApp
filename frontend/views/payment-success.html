@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Payment Processing...</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <h2>Payment processing...</h2>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get("orderId");
+
+        verifyPayment(orderId);
+
+        async function verifyPayment(orderId) {
+        try {
+            const res = await fetch(`http://localhost:3001/payment/payment-status/${orderId}`, {
+            method: "GET",
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+            });
+
+            const data = await res.json();
+            console.log("STATUS:", data);    
+
+
+            if (data.status === "PAID") {
+            document.body.innerHTML = "<h2>🎉 Payment Successful!</h2>";
+            } else {
+            document.body.innerHTML = "<h2>❌ Payment Failed</h2>";
+            }
+
+        } catch (err) {
+            console.log("Verify error:", err);
+        }
+        }
+    </script>
+
+</body>
+</html>

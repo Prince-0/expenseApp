@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Buy Premium</title>
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+</head>
+<body>
+
+<h2>Buy Premium Membership</h2>
+<button onclick="pay()">Pay</button>
+
+<script>
+async function pay() {
+  const res = await fetch('http://localhost:3001/payment/pay', {
+    method: 'POST',
+    headers: {
+      Authorization: localStorage.getItem('token')
+    }
+  });
+
+  const data = await res.json();
+
+  const cashfree = new Cashfree({
+    mode: "sandbox"
+  });
+
+  cashfree.checkout({
+    paymentSessionId: data.paymentSessionId,
+    returnUrl: `http://127.0.0.1:5502/frontend/views/payment-success.html?orderId=${data.orderId}`
+  });
+}
+</script>
+
+</body>
+</html>

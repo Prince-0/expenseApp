@@ -1,23 +1,33 @@
+require('dotenv').config({ path: __dirname + '/.env' });
+
 const express = require('express');
 const cors = require('cors');
 
 const sequelize = require('./db');
-const User = require('./usersmodel');
-const expense = require('./transactionModel');
+const user = require('./models/usersmodel');
+const expense = require('./models/transactionModel');
+const payment = require('./models/paymentModel');
 
-User.hasMany(expense);
-expense.belongsTo(User);
+user.hasMany(expense , { foreignKey: 'userId' });
+expense.belongsTo(user , { foreignKey: 'userId' });
 
-const userRoutes = require('./authRoute');
-const transactionRoute = require('./transactionRoute');
+const userRoute = require('./routes/userRoute');
+const paymentRoute = require('./routes/paymentRoute');
+const transactionRoute = require('./routes/transactionRoute');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
-app.use('/user', userRoutes);
-app.use('/user',transactionRoute);
+app.use('/user', userRoute);
+app.use('/expense',transactionRoute);
+app.use('/payment', paymentRoute);
+
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
 
 sequelize.sync()
     .then(() => {
