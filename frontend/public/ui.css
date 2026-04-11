@@ -65,9 +65,12 @@ body {
   margin-bottom: 15px;
 }
 
+select{
+  width: 100%;
+}
 /* Inputs */
 input, select {
-  width: 100%;
+  width: 94%;
   margin-bottom: 10px;
   padding: 8px;
   border-radius: 6px;

@@ -1,13 +1,27 @@
 const Transaction = require('../models/transactionModel');
+const categorizeExpense = require('../services/AIcategorizer');
+
 
 const addTransaction = async (req,res)=>{
     try{
+        const { amount, description } = req.body;
+
+        if (!amount || !description) {
+            return res.status(400).json({
+                message: "Amount and description are required"
+            });
+        }
+
+        const category = await categorizeExpense(description);
+
         const transaction = await Transaction.create({
-            amount: req.body.amount,
-            category: req.body.category,
-            description: req.body.description,
+            amount,
+            category,
+            description,
             userId: req.user.id 
         });
+
+        res.status(201).json({transaction});
     }
 
     catch(err){

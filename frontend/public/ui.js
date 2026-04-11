@@ -45,9 +45,14 @@ async function loadTransactions() {
         const data = await res.json();
     
         const list = document.getElementById("expenseList");
+        const totalexp = document.getElementById("totalexpense");
         list.innerHTML = "";
 
+        let total = 0;
+
         data.forEach(t => {
+            total += Number(t.amount);
+
             const li = document.createElement("li");
             li.id = t.id;
 
@@ -59,6 +64,8 @@ async function loadTransactions() {
             list.appendChild(li);
         });
 
+        totalexp.textContent = `Total expense: Rs. ${total}`;
+
     } catch (err) {
         console.log("Load error:", err);
     }
@@ -66,7 +73,6 @@ async function loadTransactions() {
 
 async function addTransaction() {
     const amount = document.getElementById("amount").value;
-    const category = document.getElementById("category").value;
     const description = document.getElementById("description").value;
 
     if (!amount || !description) {
@@ -80,7 +86,7 @@ async function addTransaction() {
                 "Content-Type": "application/json",
                 "Authorization": token
             },
-            body: JSON.stringify({ amount, category, description })
+            body: JSON.stringify({ amount, description })
         });
 
         document.getElementById("amount").value = "";
@@ -113,17 +119,17 @@ async function buyPremium() {
     try {
         const token = localStorage.getItem("token");
 
-       // console.log("TOKEN:", token);  🔍 debug
+       // console.log("TOKEN:", token);  
 
         const res = await fetch("http://localhost:3001/payment/pay", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": token   // ✅ MUST match backend
+                "Authorization": token    
             }
         });
 
-        const text = await res.text(); // 🔥 debug first
+        const text = await res.text(); 
         console.log("RESPONSE:", text);
 
         const data = JSON.parse(text);
