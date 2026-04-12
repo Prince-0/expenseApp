@@ -12,7 +12,7 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^1.49.0",
     "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "cashfree-pg": "^5.1.0",

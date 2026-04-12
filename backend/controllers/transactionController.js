@@ -1,8 +1,11 @@
 const Transaction = require('../models/transactionModel');
+const User = require('../models/usersmodel');
+const sequelize = require('../db');
 const categorizeExpense = require('../services/AIcategorizer');
 
 
 const addTransaction = async (req,res)=>{
+    const t = await sequelize.transaction();
     try{
         const { amount, description } = req.body;
 
@@ -19,12 +22,32 @@ const addTransaction = async (req,res)=>{
             category,
             description,
             userId: req.user.id 
-        });
+        },
+         { 
+            transaction: t 
+            }
+        );
+
+        const user = await User.findByPk(req.user.id, { transaction: t });
+
+        const totalExpense =
+            Number(user.totalExpenses) + Number(amount);
+
+        await user.update(
+            { totalExpenses: totalExpense },
+            { transaction: t }
+        );
+
+        console.log("Before commit");
+        await t.commit();
+        console.log("After commit");
+
 
         res.status(201).json({transaction});
     }
 
     catch(err){
+        await t.rollback();
         res.status(500).json(err);
     }
 

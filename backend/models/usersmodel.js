@@ -1,4 +1,3 @@
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
@@ -20,6 +19,10 @@ const User = sequelize.define('user', {
     isPremium: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    totalExpenses: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0
     }
 },
 {

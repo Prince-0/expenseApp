@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-sequelize.sync()
+sequelize.sync({alter:true})
     .then(() => {
         console.log('Database synced');
         app.listen(3001, () => {

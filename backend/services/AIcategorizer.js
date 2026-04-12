@@ -1,9 +1,28 @@
-const {GoogleGenerativeAI} = require('@google/generative-ai');
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const { GoogleGenAI } = require("@google/genai");
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY
+});
+
+async function test() {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: "Say hello"
+    });
+
+    console.log("RESULT:", response.text);
+
+  } catch (err) {
+    console.log("FULL ERROR:", err);
+  }
+}
+
+test();
 
 async function categorizeExpense(description) {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+        const model = await ai.models.generateContent({ model: "gemini-2.5-flash" });
 
         const prompt = `
         Categorize the following expense into only one of these categories:
@@ -14,9 +33,17 @@ async function categorizeExpense(description) {
         Only return the category name.
         `;
 
-        const result = await model.generateContent(prompt);
+        const result = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [
+                {
+                role: "user",
+                parts: [{ text: prompt }]
+                }
+            ]
+        });
         const response = await result.response;
-        let text = response.text().trim();
+        let text = response.text.trim();
 
         text = text.split("\n")[0].replace(/[^a-zA-Z]/g, "");
 
