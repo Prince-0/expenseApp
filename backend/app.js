@@ -1,5 +1,4 @@
 require('dotenv').config({ path: __dirname + '/.env' });
-console.log("API KEY:", process.env.GEMINI_API_KEY);
 
 const express = require('express');
 const cors = require('cors');
@@ -15,6 +14,7 @@ expense.belongsTo(user , { foreignKey: 'userId' });
 const userRoute = require('./routes/userRoute');
 const paymentRoute = require('./routes/paymentRoute');
 const transactionRoute = require('./routes/transactionRoute');
+const passwordRoute = require('./routes/passwordRoute');
 
 const app = express();
 
@@ -25,6 +25,7 @@ app.use(express.static('public'));
 app.use('/user', userRoute);
 app.use('/expense',transactionRoute);
 app.use('/payment', paymentRoute);
+app.use('/password',passwordRoute);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

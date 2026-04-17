@@ -4,25 +4,9 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
-async function test() {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: "Say hello"
-    });
-
-    console.log("RESULT:", response.text);
-
-  } catch (err) {
-    console.log("FULL ERROR:", err);
-  }
-}
-
-test();
-
 async function categorizeExpense(description) {
     try {
-        const model = await ai.models.generateContent({ model: "gemini-2.5-flash" });
+        //const model = await ai.models.generateContent({ model: "gemini-2.5-flash" });
 
         const prompt = `
         Categorize the following expense into only one of these categories:
@@ -42,9 +26,9 @@ async function categorizeExpense(description) {
                 }
             ]
         });
-        const response = await result.response;
-        let text = response.text.trim();
+        let text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "Other";
 
+        // clean text
         text = text.split("\n")[0].replace(/[^a-zA-Z]/g, "");
 
         const validCategories = [
@@ -52,11 +36,8 @@ async function categorizeExpense(description) {
             "Apparels","Entertainment","Health","Other"
         ];
 
-        if (!validCategories.includes(text)) {
-            return "Other";
-        }
+        return validCategories.includes(text) ? text : "Other";
 
-        return text;
 
     } catch (err) {
         console.log("AI Error:", err);

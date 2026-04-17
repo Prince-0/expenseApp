@@ -1,4 +1,3 @@
-
 <!DOCTYPE html> 
 <html> 
     <head> 
@@ -22,6 +21,14 @@
                 <a href="signup.html">Sign up here</a>
             </p>
         </form>
+
+        <button onclick="forgotPassword()">Forgot Password</button>
+
+        <div id="forgotPasswordDiv" style="display: none; margin-top: 10px;">
+            <input type="email" id="forgotEmail" placeholder="Enter your email" required />
+            <button onclick="submitForgotPassword()">Submit</button>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
         <script src="../public/login.js"></script>
     </body>

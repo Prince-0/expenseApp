@@ -136,6 +136,12 @@ async function buyPremium() {
 
         console.log("DATA:", data);
 
+        const { paymentSessionId } = data;
+
+        // 🔥 Redirect to payment page automatically
+        window.location.href = `payment.html?sessionId=${paymentSessionId}`;
+
+
     } catch (err) {
         console.error("Payment error:", err);
     }

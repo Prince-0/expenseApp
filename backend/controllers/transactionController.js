@@ -23,26 +23,21 @@ const addTransaction = async (req,res)=>{
             description,
             userId: req.user.id 
         },
-         { 
+        { 
             transaction: t 
-            }
-        );
+        });
 
         const user = await User.findByPk(req.user.id, { transaction: t });
 
-        const totalExpense =
-            Number(user.totalExpenses) + Number(amount);
+        const totalExpense = Number(user.totalExpenses) + Number(amount);
 
         await user.update(
             { totalExpenses: totalExpense },
             { transaction: t }
         );
 
-        console.log("Before commit");
         await t.commit();
-        console.log("After commit");
-
-
+        
         res.status(201).json({transaction});
     }
 
@@ -67,23 +62,59 @@ const getTransaction = async (req,res) =>{
     
 }
 
-const deleteTransaction = async(req,res)=>{
-    try{
-        await Transaction.destroy({
-            where:{
-                 id:req.params.id ,
-                 userId:req.user.id
-            }
+const deleteTransaction = async (req, res) => {
+    const t = await sequelize.transaction();
+
+    try {
+        //  Find transaction
+        const transaction = await Transaction.findOne({
+            where: {
+                id: req.params.id,
+                userId: req.user.id
+            },
+            transaction: t
         });
 
-        res.send("Transaction deleted");
-    }
+        if (!transaction) {
+            await t.rollback();
+            return res.status(404).json({
+                message: "Transaction not found"
+            });
+        }
 
-    catch(err){
-    res.status(500).json(err);
-    }
+        //  Get amount before delete
+        const amount = transaction.amount;
 
-}
+        //  Delete transaction
+        await transaction.destroy({ transaction: t });
+
+        //  Get fresh user
+        const user = await User.findByPk(req.user.id, { transaction: t });
+
+        console.log("USER TOTAL BEFORE:", user.totalExpenses);
+
+        //  Update totalExpenses
+        const totalExpense = Number(user.totalExpenses) - Number(amount);
+
+        await user.update(
+            { totalExpenses: totalExpense },
+            { transaction: t }
+        );
+
+        await t.commit();
+
+        res.status(200).json({
+            message: "Transaction deleted"
+        });
+
+    } catch (err) {
+        await t.rollback();
+
+        res.status(500).json({
+            error: err.message
+        });
+    }
+};
 
 module.exports = { 
     addTransaction , getTransaction , deleteTransaction
