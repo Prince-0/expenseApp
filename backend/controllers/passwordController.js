@@ -1,5 +1,8 @@
 const User = require('../models/usersmodel');
 const sendEmail = require('../services/emailServices');
+const pswdReset = require('../models/passwordReset');
+const {v4: uuidv4} = require('uuid');
+const bcrypt = require('bcrypt');
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -9,14 +12,32 @@ exports.forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    // 1. Check if user exists
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 2. Send dummy email
+    const id = uuidv4();
+
+    await pswdReset.create({
+      id,
+      userId: user.id,
+      isActive: true
+    });
+
+    const resetLink = `http://localhost:3001/password/resetpassword/${id}`;
+
+    // 🔥 Send Email
+    await sendEmail(
+      email,
+      "Reset your password",
+      `<p>Click below to reset password:</p>
+       <a href="${resetLink}">Reset Password</a>`
+    );
+
+    res.status(200).json({ message: "Reset link sent to email" });
+    /*
     await sendEmail(
       email,
       "Password Reset Request",
@@ -27,11 +48,59 @@ exports.forgotPassword = async (req, res) => {
     res.status(200).json({
       message: "Email sent successfully"
     });
+    */
 
   } catch (err) {
     console.error("Forgot Password Error:", err);
     res.status(500).json({
       message: "Something went wrong"
     });
+  }
+};
+
+
+exports.getResetPage = async (req, res) => {
+  const { id } = req.params;
+
+  const request = await pswdReset.findOne({ where: { id } });
+
+  if (!request || !request.isActive) {
+    return res.send("Invalid or expired link");
+  }
+
+  res.send(`
+    <form action="/password/updatepassword/${id}" method="POST">
+      <input type="password" name="password" placeholder="New Password" required />
+      <button type="submit">Reset Password</button>
+    </form>
+  `);
+};
+
+
+exports.updatePassword = async (req, res) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  try {
+    const request = await pswdReset.findOne({ where: { id } });
+
+    if (!request || !request.isActive) {
+      return res.status(400).json({ message: "Invalid link" });
+    }
+
+    const user = await User.findByPk(request.userId);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    request.isActive = false;
+    await request.save();
+
+    res.send("Password updated successfully");
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
