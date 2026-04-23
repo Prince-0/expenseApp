@@ -28,7 +28,6 @@ exports.forgotPassword = async (req, res) => {
 
     const resetLink = `http://localhost:3001/password/resetpassword/${id}`;
 
-    // 🔥 Send Email
     await sendEmail(
       email,
       "Reset your password",
@@ -45,9 +44,7 @@ exports.forgotPassword = async (req, res) => {
        <p>This is a test email for password reset.</p> `
     );
 
-    res.status(200).json({
-      message: "Email sent successfully"
-    });
+    res.status(200).json({message: "Email sent successfully" });
     */
 
   } catch (err) {

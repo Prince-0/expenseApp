@@ -103,7 +103,7 @@ async function deleteTransaction(id) {
     try {
         await fetch(`${API}/${id}`, {
             method: "DELETE",
-            headers: {   // ✅ FIXED
+            headers: {   
                 "Authorization": token
             }
         });
@@ -118,9 +118,7 @@ async function deleteTransaction(id) {
 async function buyPremium() {
     try {
         const token = localStorage.getItem("token");
-
-       // console.log("TOKEN:", token);  
-
+ 
         const res = await fetch("http://localhost:3001/payment/pay", {
             method: "POST",
             headers: {
@@ -138,9 +136,7 @@ async function buyPremium() {
 
         const { paymentSessionId } = data;
 
-        // 🔥 Redirect to payment page automatically
         window.location.href = `payment.html?sessionId=${paymentSessionId}`;
-
 
     } catch (err) {
         console.error("Payment error:", err);

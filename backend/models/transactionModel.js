@@ -19,7 +19,7 @@ const Transaction = sequelize.define("expense",{
 },
   {
     tableName: "expense" ,
-    timestamps: false
+    timestamps: true
   }
   
 );

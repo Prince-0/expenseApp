@@ -4,7 +4,6 @@ body {
   background: #f4f6f9;
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -45,14 +44,12 @@ body {
   background: #16a34a;
 }
 
-/* Container */
 .container {
   display: flex;
   gap: 20px;
   padding: 20px;
 }
 
-/* Cards */
 .card {
   background: white;
   padding: 20px;
@@ -68,7 +65,7 @@ body {
 select{
   width: 100%;
 }
-/* Inputs */
+
 input, select {
   width: 94%;
   margin-bottom: 10px;
@@ -77,7 +74,6 @@ input, select {
   border: 1px solid #ccc;
 }
 
-/* Buttons */
 button {
   width: 100%;
   padding: 10px;
@@ -92,7 +88,6 @@ button:hover {
   background: #4338ca;
 }
 
-/* Expense list */
 ul {
   list-style: none;
   padding: 0;
