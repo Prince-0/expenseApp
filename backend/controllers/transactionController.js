@@ -54,7 +54,7 @@ const getTransaction = async (req,res) =>{
             where: { userId: req.user.id }
         });
 
-        res.json(transactions);   
+        res.status(200).json(transactions);   
     }
     catch(err){
         res.status(500).json(err);
