@@ -1,75 +1,39 @@
-/*const expenses = [
-  {
-    amount: 200,
-    category: "Food",
-    description: "Lunch",
-    createdAt: "2026-04-21T10:30:00Z"
-  },
-  {
-    amount: 500,
-    category: "Shopping",
-    description: "Clothes",
-    createdAt: "2026-04-20T12:00:00Z"
-  },
-  {
-    amount: 100,
-    category: "Travel",
-    description: "Auto",
-    createdAt: "2026-04-19T09:00:00Z"
-  },
-  {
-    amount: 300,
-    category: "Food",
-    description: "Dinner",
-    createdAt: "2026-04-18T20:00:00Z"
-  },
-  {
-    amount: 150,
-    category: "Bills",
-    description: "Electricity",
-    createdAt: "2026-04-17T15:00:00Z"
-  },
-  {
-    amount: 700,
-    category: "Shopping",
-    description: "Shoes",
-    createdAt: "2026-04-16T11:00:00Z"
-  }
-];
-*/
-
-// ================= STATE =================
-let currentPage = 1;
-const rowsPerPage = 5;
-
-let currentData = [];
-let currentFilter = "all";
-let currentSort = "latest"; // latest | oldest
-
-
 let expenses = [];
+
 async function loadExpenses() {
   try {
     const token = localStorage.getItem("token");
 
     const res = await fetch("http://localhost:3001/expense/transaction", {
       headers: {
-        "authorization": token // 🔥 important
+        "authorization": token 
       }
   });
     const data = await res.json();
 
     expenses = data;
 
-    render(); // 🔥 triggers UI
+    render();
   } catch (err) {
-    console.error("Error fetching expenses:", err);
+    console.log("Error fetching expenses:", err);
   }
 }
 
 loadExpenses();
 
-// ================= FILTER FUNCTION =================
+let currentPage = 1;
+//let rowsPerPage = 5;
+
+let currentData = [];
+let currentFilter = "all";
+let currentSort = "latest"; 
+
+function getRowsPerPage() {
+  const select = document.getElementById("rowsSelect");
+  return select ? Number(select.value) : 5;
+}
+
+
 function filterExpenses(expenses, type) {
   const today = new Date();
 
@@ -113,15 +77,12 @@ function filterExpenses(expenses, type) {
 }
 
 
-// ================= CORE LOGIC =================
-
-// 🔹 Get filtered data
 function getFilteredData() {
   if (currentFilter === "all") return expenses;
   return filterExpenses(expenses, currentFilter);
 }
 
-// 🔹 Sort data
+
 function getSortedData(data) {
   if (currentSort === "latest") {
     return [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -130,7 +91,7 @@ function getSortedData(data) {
   }
 }
 
-// 🔹 Main render controller
+
 function render() {
   const filtered = getFilteredData();
   const sorted = getSortedData(filtered);
@@ -142,12 +103,11 @@ function render() {
 }
 
 
-// ================= TABLE + PAGINATION =================
-
 function displayPage(page) {
   const tableBody = document.getElementById("tableBody");
   tableBody.innerHTML = "";
 
+  const rowsPerPage = getRowsPerPage(); 
   const start = (page - 1) * rowsPerPage;
   const end = start + rowsPerPage;
 
@@ -174,9 +134,6 @@ function displayPage(page) {
   updatePaginationUI();
 }
 
-
-// ================= TOTAL =================
-
 function calculateTotal(data) {
   return data.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
 }
@@ -190,10 +147,8 @@ function updateTotal(data) {
   }
 }
 
-
-// ================= PAGINATION =================
-
 function updatePaginationUI() {
+  const rowsPerPage = getRowsPerPage();
   const totalPages = Math.ceil(currentData.length / rowsPerPage) || 1;
 
   document.getElementById("pageInfo").innerText =
@@ -204,8 +159,6 @@ function updatePaginationUI() {
 }
 
 
-// ================= UI HELPERS =================
-
 function setActive(btn) {
   document.querySelectorAll(".buttons button").forEach(b => {
     b.classList.remove("active");
@@ -213,10 +166,6 @@ function setActive(btn) {
   btn.classList.add("active");
 }
 
-
-// ================= EVENT LISTENERS =================
-
-// 🔹 Filters
 document.getElementById("allBtn").addEventListener("click", function (e) {
   currentFilter = "all";
   currentPage = 1;
@@ -250,7 +199,6 @@ document.getElementById("monthlyBtn").addEventListener("click", function (e) {
 });
 
 
-// 🔹 Pagination
 document.getElementById("prevBtn").addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
@@ -259,7 +207,7 @@ document.getElementById("prevBtn").addEventListener("click", () => {
 });
 
 document.getElementById("nextBtn").addEventListener("click", () => {
-  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+  const totalPages = Math.ceil(currentData.length / getRowsPerPage());
 
   if (currentPage < totalPages) {
     currentPage++;
@@ -268,7 +216,6 @@ document.getElementById("nextBtn").addEventListener("click", () => {
 });
 
 
-// 🔹 Sorting (optional button)
 const sortBtn = document.getElementById("sortBtn");
 
 if (sortBtn) {
@@ -283,6 +230,12 @@ if (sortBtn) {
   });
 }
 
+document.getElementById("rowsSelect").addEventListener("change", function (e) {
+  rowsPerPage = Number(e.target.value); 
 
-// ================= INITIAL LOAD =================
+  currentPage = 1; 
+  //displayPage(currentPage);
+  render();
+});
+
 render();
