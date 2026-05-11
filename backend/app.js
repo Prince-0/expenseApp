@@ -2,6 +2,7 @@ require('dotenv').config({ path: __dirname + '/.env' });
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const sequelize = require('./db');
 const user = require('./models/usersmodel');
@@ -23,7 +24,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, "../frontend/public")));
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/user', userRoute);
@@ -31,15 +32,17 @@ app.use('/expense',transactionRoute);
 app.use('/payment', paymentRoute);
 app.use('/password',passwordRoute);
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/views/login.html'));
 });
+
+const PORT = process.env.PORT || 3001;
 
 sequelize.sync()
     .then(() => {
         console.log('Database synced');
-        app.listen(3001, () => {
-            console.log('Server running on port 3001');
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
         });
     })
     .catch(err => console.log(err));

@@ -22,7 +22,6 @@ async function loadExpenses() {
 loadExpenses();
 
 let currentPage = 1;
-//let rowsPerPage = 5;
 
 let currentData = [];
 let currentFilter = "all";
@@ -234,7 +233,6 @@ document.getElementById("rowsSelect").addEventListener("change", function (e) {
   rowsPerPage = Number(e.target.value); 
 
   currentPage = 1; 
-  //displayPage(currentPage);
   render();
 });
 
